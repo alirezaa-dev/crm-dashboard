@@ -1,0 +1,12 @@
+export default {
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        primary: "#2563EB",
+        accent: "#236548",
+      },
+    },
+  },
+  plugins: [],
+}

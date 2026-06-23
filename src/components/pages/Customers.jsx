@@ -1,3 +1,5 @@
+import Button from "../ui/Button";
+
 export default function Customers() {
   const customers = [
     {
@@ -20,35 +22,48 @@ export default function Customers() {
 
   return (
     <>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between items-center">
         <div>
-          <h2 className="text-gray-900">مشتری‌ها</h2>
+          <h2 className="pb-4">مشتری‌ها</h2>
           <p>تعداد کل مشتری‌ها: {customers.length}</p>
         </div>
 
         <div>
-          <button className="bg-gray-800" onClick={addNewUser}>افزودن مشتری جدید</button>
+          <Button className="p-2 border rounded-sm mx-1 border-gray-300">
+            {" "}
+            <span className="text-lg pl-2 ">+</span>افزودن مشتری جدید
+          </Button>
         </div>
       </div>
 
-      <div>
-        <table>
-          <thead>
+      <div className="bg-white rounded-md">
+        <table className="w-full text-right">
+          <thead className="bg-gray-200">
             <tr>
-              <th>شماره</th>
-              <th>نام و نام خانوادگی</th>
-              <th>امتیاز</th>
-              <th>تاریخ عضویت</th>
+              <th className="px-4 py-4 border-b border-border">شماره</th>
+              <th className="px-4 py-4 border-b border-border">
+                نام و نام خانوادگی
+              </th>
+              <th className="px-4 py-4 border-b border-border">امتیاز</th>
+              <th className="px-4 py-4 border-b border-border">تاریخ عضویت</th>
             </tr>
           </thead>
 
           <tbody>
             {customers.map((customer) => (
               <tr key={customer.id}>
-                <td>{customer.id}</td>
-                <td>{customer.name}</td>
-                <td>{customer.score}</td>
-                <td>{customer.joinDate}</td>
+                <td className="px-4 py-4 border-b border-border">
+                  {customer.id}
+                </td>
+                <td className="px-4 py-4 border-b border-border">
+                  {customer.name}
+                </td>
+                <td className="px-4 py-4 border-b border-border">
+                  {customer.score}
+                </td>
+                <td className="px-4 py-4 border-b border-border">
+                  {customer.joinDate}
+                </td>
               </tr>
             ))}
           </tbody>
