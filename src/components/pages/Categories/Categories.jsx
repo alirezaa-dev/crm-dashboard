@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import Button from "../../ui/Button";
 import { MdOutlineModeEdit, MdDeleteOutline } from "react-icons/md";
+import DeleteButton from "../../ui/DeleteButton";
 
 export default function Categories() {
   const [isOpenModalAddCategory, setIsOpenModalAddCategory] = useState(false);
   const [isOpenModalEditCategory, setIsOpenModalEditCategory] = useState(false);
+  const [isOpenModalDeleteCategory, setIsOpenModalDeleteCategory] =
+    useState(false);
 
   const [title, setTitle] = useState("");
   const [parentId, setParentId] = useState(0);
@@ -19,6 +22,7 @@ export default function Categories() {
       id: 1,
       title: "بهداشت شخصی و حمام",
       parentId: null,
+      isActive: true,
     },
     {
       id: 2,
@@ -29,16 +33,19 @@ export default function Categories() {
       id: 3,
       title: "شوینده صورت",
       parentId: 2,
+      isActive: true,
     },
     {
       id: 4,
       title: "کرم مرطوب کننده",
       parentId: 2,
+      isActive: false
     },
     {
       id: 5,
       title: "شامپو بدن",
       parentId: 1,
+      isActive: true,
     },
   ]);
 
@@ -78,6 +85,11 @@ export default function Categories() {
     resetForm();
     setSelectedCategoryId(null);
     setIsOpenModalEditCategory(false);
+  }
+  function deleteCategory(){
+    setCategories((prev) => prev.filter((c) => c.id !== selectedCategoryId));
+    setSelectedCategoryId(null);
+    setIsOpenModalDeleteCategory(false);
   }
 
   return (
@@ -139,7 +151,13 @@ export default function Categories() {
                     <MdOutlineModeEdit className="text-blue-600" />
                   </button>
 
-                  <button className="p-2 mx-1 rounded-md bg-red-100 cursor-pointer">
+                  <button
+                    className="p-2 mx-1 rounded-md bg-red-100 cursor-pointer"
+                    onClick={() => {
+                      setIsOpenModalDeleteCategory(true);
+                      setSelectedCategoryId(category.id);
+                    }}
+                  >
                     <MdDeleteOutline className="text-red-500" />
                   </button>
                 </td>
@@ -239,6 +257,24 @@ export default function Categories() {
             <button
               className="mr-2 px-3 py-2 cursor-pointer"
               onClick={() => setIsOpenModalEditCategory(false)}
+            >
+              بستن
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Modal */}
+      {isOpenModalDeleteCategory && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-md w-96">
+            <p className="mb-3">آیا از حذف دسته‌بندی مطمئن هستید؟</p>
+
+            <DeleteButton onClick={deleteCategory}>حذف</DeleteButton>
+
+            <button
+              className="mr-2 px-3 py-2 cursor-pointer"
+              onClick={() => setIsOpenModalDeleteCategory(false)}
             >
               بستن
             </button>
