@@ -53,7 +53,7 @@ export default function Customers() {
       if (sortBy === "newestJoinDate") {
         return new Date(b.joinDate) - new Date(a.joinDate);
       }
-      if(sortBy === "oldestJoinDate"){
+      if (sortBy === "oldestJoinDate") {
         return new Date(a.joinDate) - new Date(b.joinDate);
       }
 
@@ -168,60 +168,78 @@ export default function Customers() {
       </div>
 
       {/* TABLE */}
-      <div className="bg-white rounded-md">
-        <table className="w-full text-right rounded-lg">
+      <div className="w-full overflow-x-auto rounded-md bg-white">
+        <table className="min-w-[900px] text-right border-collapse w-full">
           <thead className="bg-gray-200">
             <tr>
-              <th className="px-4 py-4 border-b border-gray-100">شماره</th>
-              <th className="px-4 py-4 border-b border-gray-100">نام</th>
-              <th className="px-4 py-4 border-b border-gray-100">موبایل</th>
-              <th className="px-4 py-4 border-b border-gray-100">امتیاز</th>
-              <th className="px-4 py-4 border-b border-gray-100">تاریخ</th>
-              <th className="px-4 py-4 border-b border-gray-100">عملیات</th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap min-w-[70px]">
+                شماره
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap min-w-[220px]">
+                نام
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap min-w-[170px]">
+                موبایل
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap min-w-[100px]">
+                امتیاز
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap min-w-[150px]">
+                تاریخ
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap min-w-[110px]">
+                عملیات
+              </th>
             </tr>
           </thead>
 
           <tbody>
             {filteredCustomers.map((customer) => (
               <tr key={customer.id}>
-                <td className="px-4 py-3 border-b border-gray-100">
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {customer.id}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {customer.name}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {customer.phone}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {customer.score}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {customer.joinDate}
                 </td>
 
-                <td className="px-4 py-3 border-b border-gray-100">
-                  <button
-                    className="p-2 mx-1 rounded-md bg-blue-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedCustomerId(customer.id);
-                      setName(customer.name);
-                      setPhone(customer.phone);
-                      setIsModalOpenEdit(true);
-                    }}
-                  >
-                    <MdOutlineModeEdit className="text-blue-600" />
-                  </button>
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="p-2 rounded-md bg-blue-100 cursor-pointer"
+                      onClick={() => {
+                        setSelectedCustomerId(customer.id);
+                        setName(customer.name);
+                        setPhone(customer.phone);
+                        setIsModalOpenEdit(true);
+                      }}
+                    >
+                      <MdOutlineModeEdit className="text-blue-600" />
+                    </button>
 
-                  <button
-                    className="p-2 mx-1 rounded-md bg-red-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedCustomerId(customer.id);
-                      setIsModalOpenDelete(true);
-                    }}
-                  >
-                    <MdDeleteOutline className="text-red-500" />
-                  </button>
+                    <button
+                      className="p-2 rounded-md bg-red-100 cursor-pointer"
+                      onClick={() => {
+                        setSelectedCustomerId(customer.id);
+                        setIsModalOpenDelete(true);
+                      }}
+                    >
+                      <MdDeleteOutline className="text-red-500" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

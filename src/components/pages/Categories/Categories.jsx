@@ -5,13 +5,19 @@ import DeleteButton from "../../ui/DeleteButton";
 import ActiveStatus from "../../ui/ActiveStatus";
 import { useContext } from "react";
 import { CategoryContext } from "../../../context/CategoryContext";
+import { ProductContext } from "../../../context/ProductContext";
 
 export default function Categories() {
   const [isOpenModalAddCategory, setIsOpenModalAddCategory] = useState(false);
   const [isOpenModalEditCategory, setIsOpenModalEditCategory] = useState(false);
   const [isOpenModalDeleteCategory, setIsOpenModalDeleteCategory] =
     useState(false);
-
+  const { products } = useContext(ProductContext);
+  const countProducts = (categoryId) => {
+    return products.filter((product) => product.categoryId === categoryId)
+      .length;
+  };
+const [search , setSearch] = useState("");
   const [title, setTitle] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [parentId, setParentId] = useState(0);
@@ -21,6 +27,9 @@ export default function Categories() {
     return categories.find((cat) => cat.id === parentId);
   };
   const { categories, setCategories } = useContext(CategoryContext);
+  const filteredCategories = [...categories].filter((category) =>
+    category.title.toLowerCase().includes(search.toLowerCase()),
+  );
 
   function resetForm() {
     setTitle("");
@@ -83,67 +92,92 @@ export default function Categories() {
           افزودن دسته‌بندی جدید
         </Button>
       </div>
+      {/* Search */}
+      <div className="flex flex-row gap-4">
+        <input
+          className="h-12 leading-12 px-3 border border-gray-200 rounded bg-white w-full"
+          type="text"
+          placeholder="جستجوی دسته‌بندی"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+  
+      </div>
+
       {/* TABLE */}
-      <div className="bg-white rounded-md">
-        <table className="w-full text-right rounded-lg">
+      <div className="w-full overflow-x-auto rounded-md bg-white">
+        <table className="w-full text-right border-collapse">
           <thead className="bg-gray-200">
             <tr>
-              <th className="px-4 py-4 border-b border-gray-100">شماره</th>
-              <th className="px-4 py-4 border-b border-gray-100">
-                {" "}
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap">
+                شماره
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap">
                 نام دسته‌بندی
               </th>
-              <th className="px-4 py-4 border-b border-gray-100">
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap">
                 دسته‌بندی اصلی
               </th>
-              <th className="px-4 py-4 border-b border-gray-100">
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap">
                 تعداد محصولات
               </th>
-              <th className="px-4 py-4 border-b border-gray-100">وضعیت</th>
-              <th className="px-4 py-4 border-b border-gray-100">عملیات</th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap">
+                وضعیت
+              </th>
+              <th className="px-4 py-4 border-b border-gray-100 text-sm whitespace-nowrap">
+                عملیات
+              </th>
             </tr>
           </thead>
 
           <tbody>
-            {categories.map((category) => (
+            {filteredCategories.map((category) => (
               <tr key={category.id}>
-                <td className="px-4 py-3 border-b border-gray-100">
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {category.id}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {category.title}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
                   {getParentCategory(category.parentId)?.title || "-"}
                 </td>
-                <td className="px-4 py-3 border-b border-gray-100">1</td>
-                <td className="px-4 py-3 border-b border-gray-100">
-                 <ActiveStatus status={category.isActive} />
+
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
+                  {countProducts(category.id)}
                 </td>
 
-                <td className="px-4 py-3 border-b border-gray-100">
-                  <button
-                    className="p-2 mx-1 rounded-md bg-blue-100 cursor-pointer"
-                    onClick={() => {
-                      setSelectedCategoryId(category.id);
-                      setTitle(category.title);
-                      setParentId(category.parentId ?? 0);
-                      setIsOpenModalEditCategory(true);
-                      setIsActive(category.isActive);
-                    }}
-                  >
-                    <MdOutlineModeEdit className="text-blue-600" />
-                  </button>
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
+                  <ActiveStatus status={category.isActive} />
+                </td>
 
-                  <button
-                    className="p-2 mx-1 rounded-md bg-red-100 cursor-pointer"
-                    onClick={() => {
-                      setIsOpenModalDeleteCategory(true);
-                      setSelectedCategoryId(category.id);
-                    }}
-                  >
-                    <MdDeleteOutline className="text-red-500" />
-                  </button>
+                <td className="px-4 py-3 border-b border-gray-100 text-sm whitespace-nowrap">
+                  <div className="flex items-center gap-2">
+                    <button
+                      className="p-2 rounded-md bg-blue-100 cursor-pointer"
+                      onClick={() => {
+                        setSelectedCategoryId(category.id);
+                        setTitle(category.title);
+                        setParentId(category.parentId ?? 0);
+                        setIsOpenModalEditCategory(true);
+                        setIsActive(category.isActive);
+                      }}
+                    >
+                      <MdOutlineModeEdit className="text-blue-600" />
+                    </button>
+
+                    <button
+                      className="p-2 rounded-md bg-red-100 cursor-pointer"
+                      onClick={() => {
+                        setIsOpenModalDeleteCategory(true);
+                        setSelectedCategoryId(category.id);
+                      }}
+                    >
+                      <MdDeleteOutline className="text-red-500" />
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

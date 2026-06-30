@@ -8,16 +8,19 @@ import { ProductContext } from "../../../context/ProductContext";
 import ActiveStatus from "../../ui/ActiveStatus";
 import OutStock from "../../ui/OutStock";
 import DeleteButton from "../../ui/DeleteButton";
+import { BrandContext } from "../../../context/BrandContext";
 
 export default function Products() {
   const { categories } = useContext(CategoryContext);
   const { products, setProducts } = useContext(ProductContext);
+  const { brands } = useContext(BrandContext);
   const [isOpenModalAddProduct, setIsOpenModalAddProduct] = useState(false);
   const [isOpenModalEditProduct, setIsOpenModalEditProduct] = useState(false);
   const [isOpenModalDeleteProduct, setIsOpenModalDeleteProduct] =
     useState(false);
 
   const [name, setName] = useState("");
+  const [brandId, setBrandId] = useState("");
   const [sku, setSku] = useState("");
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
@@ -41,6 +44,7 @@ export default function Products() {
         price: Number(price),
         stock: Number(stock),
         isActive: true,
+        brandId: Number(brandId),
         categoryId: Number(categoryId),
       },
     ]);
@@ -51,6 +55,7 @@ export default function Products() {
     setSku("");
     setPrice("");
     setStock("");
+    setBrandId("");
     setCategoryId(categories[0]?.id || "");
 
     setIsOpenModalAddProduct(false);
@@ -71,6 +76,7 @@ export default function Products() {
               price: Number(price),
               stock: Number(stock),
               categoryId: Number(categoryId),
+              brandId: Number(brandId),
               isActive,
             }
           : product,
@@ -78,6 +84,7 @@ export default function Products() {
     );
 
     setName("");
+    setBrandId("");
     setSku("");
     setPrice("");
     setStock("");
@@ -106,86 +113,131 @@ export default function Products() {
         </Button>
       </div>
 
-      <table className="w-full text-right bg-white rounded-md">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="px-4 py-4 border-b border-border text-sm">شماره </th>
-            <th className="px-4 py-4 border-b border-border text-sm">
-              نام محصول
-            </th>
-            <th className="px-4 py-4 border-b border-border text-sm">شناسه</th>
-            <th className="px-4 py-4 border-b border-border text-sm">
-              دسته‌بندی
-            </th>
-            <th className="px-4 py-4 border-b border-border text-sm">
-              قیمت (تومان)
-            </th>
-            <th className="px-4 py-4 border-b border-border text-sm">موجودی</th>
-            <th className="px-4 py-4 border-b border-border text-sm">وضعیت</th>
-            <th className="px-4 py-4 border-b border-border text-sm">عملیات</th>
-          </tr>
-        </thead>
+      {/* Search */}
+      <div className="flex flex-row gap-4">
+        <input
+          className="h-12 leading-12 px-3 border border-gray-200 rounded bg-white w-full"
+          type="text"
+          placeholder="جستجوی دسته‌بندی"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+      <div className="w-full overflow-x-auto rounded-md bg-white">
+        <table className="min-w-[1100px] text-right border-collapse">
+          <thead className="bg-gray-200">
+            <tr>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                شماره
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                نام محصول
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                برند
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                شناسه
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                دسته‌بندی
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                قیمت (تومان)
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                موجودی
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                وضعیت
+              </th>
+              <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                عملیات
+              </th>
+            </tr>
+          </thead>
 
-        <tbody>
-          {products.map((product) => {
-            const category = categories.find(
-              (cat) => cat.id === product.categoryId,
-            );
-            return (
-              <tr key={product.id}>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  {product.id}
-                </td>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  {product.name}
-                </td>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  {product.sku}
-                </td>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  {category?.title}
-                </td>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  {product.price}
-                </td>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  {product.stock > 0 ? product.stock : <OutStock />}
-                </td>
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  <ActiveStatus status={product.isActive} />
-                </td>
+          <tbody>
+            {products.map((product) => {
+              const category = categories.find(
+                (cat) => cat.id === product.categoryId,
+              );
 
-                <td className="px-4 py-4 border-b border-border text-sm">
-                  <button
-                    className="p-2 border rounded-md mx-1 border-gray-200 bg-blue-100 shadow-sm cursor-pointer"
-                    onClick={() => {
-                      setSelectedProductId(product.id);
-                      setName(product.name);
-                      setSku(product.sku);
-                      setPrice(product.price);
-                      setStock(product.stock);
-                      setCategoryId(product.categoryId);
-                      setIsActive(product.isActive);
-                      setIsOpenModalEditProduct(true);
-                    }}
-                  >
-                    <MdOutlineModeEdit className="text-primary" />
-                  </button>
-                  <button
-                    className="p-2 border rounded-md mx-1 border-gray-200 bg-red-100 shadow-sm cursor-pointer"
-                    onClick={() => {
-                      setIsOpenModalDeleteProduct(true);
-                      setSelectedProductId(product.id);
-                    }}
-                  >
-                    <MdDeleteOutline className="text-red-400" />
-                  </button>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+              const brand = brands.find(
+                (brand) => brand.id === product.brandId,
+              );
+
+              return (
+                <tr key={product.id}>
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {product.id}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {product.name}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {brand?.title}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {product.sku}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {category?.title}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {product.price}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    {product.stock > 0 ? product.stock : <OutStock />}
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    <ActiveStatus status={product.isActive} />
+                  </td>
+
+                  <td className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="p-2 border rounded-md border-gray-200 bg-blue-100 shadow-sm cursor-pointer"
+                        onClick={() => {
+                          setSelectedProductId(product.id);
+                          setName(product.name);
+                          setBrandId(product.brandId);
+                          setSku(product.sku);
+                          setPrice(product.price);
+                          setStock(product.stock);
+                          setCategoryId(product.categoryId);
+                          setIsActive(product.isActive);
+                          setIsOpenModalEditProduct(true);
+                        }}
+                      >
+                        <MdOutlineModeEdit className="text-primary" />
+                      </button>
+
+                      <button
+                        className="p-2 border rounded-md border-gray-200 bg-red-100 shadow-sm cursor-pointer"
+                        onClick={() => {
+                          setIsOpenModalDeleteProduct(true);
+                          setSelectedProductId(product.id);
+                        }}
+                      >
+                        <MdDeleteOutline className="text-red-400" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
       {/* Add Product Modal */}
       {isOpenModalAddProduct && (
         <div
@@ -204,6 +256,20 @@ export default function Products() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+            <label className="block mb-1">برند</label>
+
+            <select
+              className="border p-2 w-full mb-3"
+              value={brandId}
+              onChange={(e) => setBrandId(Number(e.target.value))}
+            >
+              <option value="null">-</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.title}
+                </option>
+              ))}
+            </select>
 
             <label className="block mb-1">دسته‌بندی</label>
 
@@ -271,6 +337,20 @@ export default function Products() {
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
+            <label className="block mb-1">برند</label>
+
+            <select
+              className="border p-2 w-full mb-3"
+              value={brandId}
+              onChange={(e) => setBrandId(Number(e.target.value))}
+            >
+              <option value="null">-</option>
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.title}
+                </option>
+              ))}
+            </select>
 
             <label className="block mb-1">دسته‌بندی</label>
 
