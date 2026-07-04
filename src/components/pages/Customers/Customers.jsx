@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Button from "../../ui/Button";
 import { MdOutlineModeEdit, MdDeleteOutline } from "react-icons/md";
 import DeleteButton from "../../ui/DeleteButton";
 import AddModal from "./components/Addmodal";
 import EditModal from "./components/EditModal";
+import { CustomerContext } from "../../../context/CustomerContext";
 
 export default function Customers() {
   const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
@@ -20,22 +21,7 @@ export default function Customers() {
 
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
 
-  const [customers, setCustomers] = useState([
-    {
-      id: 1,
-      name: "علیرضا دهقان بنادکی",
-      phone: "09365534123",
-      score: 120,
-      joinDate: "۱۴۰۵/۰۳/۲۰",
-    },
-    {
-      id: 2,
-      name: "مریم احمدی",
-      phone: "09123456789",
-      score: 80,
-      joinDate: "۱۴۰۵/۰۳/۱۵",
-    },
-  ]);
+const {customers , setCustomers} = useContext(CustomerContext);
   const filteredCustomers = [...customers]
     .filter(
       (customer) =>

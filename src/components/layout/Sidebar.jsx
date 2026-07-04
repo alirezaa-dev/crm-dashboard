@@ -18,11 +18,11 @@ export default function Sidebar() {
         <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
           <Link to="/categories">دسته‌بندی‌ها</Link>
         </li>
-          <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
+        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
           <Link to="/brands">برندها</Link>
         </li>
         <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          سفارشات
+          <Link to="/orders">سفارشات</Link>
         </li>
       </ul>
     </div>
