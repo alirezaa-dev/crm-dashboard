@@ -6,6 +6,7 @@ import { ProductContext } from "../../../context/ProductContext";
 import OrdersTable from "./components/OrdersTable";
 import AddOrderModal from "./components/AddOrderModal";
 import useOrderForm from "./hooks/useOrderForm";
+import EditOrderModal from "./components/EditOrderModal"
 
 export default function Orders() {
   const { orders, setOrders } = useContext(OrderContext);
@@ -26,12 +27,13 @@ export default function Orders() {
 
     selectedProducts,
     setSelectedProducts,
-    
+
     filteredCustomers,
   } = useOrderForm(products, customers);
   const handleViewOrder = (order) => {
     console.log(order);
   };
+
   const updateQuantity = (id, quantity) => {
     setSelectedProducts(
       selectedProducts.map((product) =>
@@ -39,17 +41,45 @@ export default function Orders() {
       ),
     );
   };
+  const handleUpdateOrder = () => {
+    const updatedOrders = orders.map((order) =>
+      order.id === selectedOrderId
+        ? {
+            ...order,
+            customerId,
+            items: selectedProducts,
+            orderAmount,
+          }
+        : order,
+    );
+
+    setOrders(updatedOrders);
+
+    setIsOpenModalEditOrder(false);
+  };
   const handleEditOrder = (order) => {
     setSelectedOrderId(order.id);
-    setOrderNumber(order.orderNumber);
+
     setCustomerId(order.customerId);
-    setOrderStatus(order.orderStatus);
-    setOrderDate(order.orderDate);
-    setItems(order.items);
+    setCustomerSearch(
+      customers.find((c) => c.id === order.customerId)?.name || "",
+    );
+
+    const formattedItems = order.items.map((item) => {
+      const product = products.find((p) => p.id === item.productId);
+
+      return {
+        id: product?.id,
+        name: product?.name,
+        price: item.productPrice,
+        quantity: item.quantity,
+      };
+    });
+
+    setSelectedProducts(formattedItems);
 
     setIsOpenModalEditOrder(true);
   };
-
   const orderAmount = selectedProducts.reduce(
     (sum, product) => sum + product.price * product.quantity,
     0,
@@ -118,6 +148,15 @@ export default function Orders() {
   const filteredOrders = orders.filter((order) =>
     order.orderNumber.includes(search),
   );
+  const resetForm = () => {
+    setCustomerSearch("");
+    setCustomerId(null);
+    setProductSearch("");
+    setSelectedProducts([]);
+    setShowCustomers(false);
+    setShowProducts(false);
+    setIsOpenModalAddOrder(false);
+  };
   const handleAddOrder = () => {
     if (!customerId) {
       alert("لطفاً یک مشتری انتخاب کنید.");
@@ -145,17 +184,7 @@ export default function Orders() {
 
     setNextId((prev) => prev + 1);
     setNextOrderNumber((prev) => prev + 1);
-
-    // پاک کردن فرم
-    setCustomerSearch("");
-    setCustomerId(null);
-    setProductSearch("");
-    setSelectedProducts([]);
-    setShowCustomers(false);
-    setShowProducts(false);
-
-    // بستن مودال
-    setIsOpenModalAddOrder(false);
+    resetForm();
   };
 
   return (
@@ -165,7 +194,9 @@ export default function Orders() {
 
         <Button
           className="p-2 border rounded-sm mx-1 border-gray-300"
-          onClick={() => setIsOpenModalAddOrder(true)}
+          onClick={() => {
+            setIsOpenModalAddOrder(true);
+          }}
         >
           <span className="text-lg pl-2">+</span>
           ثبت سفارش جدید
@@ -192,7 +223,9 @@ export default function Orders() {
       {/* Add Order Modal */}
       <AddOrderModal
         isOpen={isOpenModalAddOrder}
-        onClose={() => setIsOpenModalAddOrder(false)}
+        onClose={() => {
+          setIsOpenModalAddOrder(false);
+        }}
         handleAddOrder={handleAddOrder}
         customerSearch={customerSearch}
         setCustomerSearch={setCustomerSearch}
@@ -212,6 +245,35 @@ export default function Orders() {
         removeProduct={removeProduct}
         increaseQuantity={increaseQuantity}
         decreaseQuantity={decreaseQuantity}
+        updateQuantity={updateQuantity}
+        orderAmount={orderAmount}
+      />
+      {/* Add Order Modal */}
+      <EditOrderModal
+        isOpen={isOpenModalEditOrder}
+        onClose={() => {
+          setIsOpenModalEditOrder(false);
+        }}
+        handleEditOrder={handleEditOrder}
+        customerSearch={customerSearch}
+        setCustomerSearch={setCustomerSearch}
+        customerId={customerId}
+        setCustomerId={setCustomerId}
+        showCustomers={showCustomers}
+        setShowCustomers={setShowCustomers}
+        filteredCustomers={filteredCustomers}
+        productSearch={productSearch}
+        setProductSearch={setProductSearch}
+        showProducts={showProducts}
+        setShowProducts={setShowProducts}
+        filteredProducts={filteredProducts}
+        selectedProducts={selectedProducts}
+        setSelectedProducts={setSelectedProducts}
+        addProductToOrder={addProductToOrder}
+        removeProduct={removeProduct}
+        increaseQuantity={increaseQuantity}
+        decreaseQuantity={decreaseQuantity}
+        updateQuantity={updateQuantity}
         orderAmount={orderAmount}
       />
     </>

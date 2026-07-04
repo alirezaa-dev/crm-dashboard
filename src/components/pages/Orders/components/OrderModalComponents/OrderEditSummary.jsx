@@ -1,9 +1,9 @@
-import Button from "../../../ui/Button";
+import Button from "../../../../ui/Button";
 
-export default function OrderSummary({
+export default function OrderEditSummary({
   orderAmount,
   onClose,
-  handleAddOrder,
+  handleEditOrder,
 }) {
   return (
     <>
@@ -25,9 +25,9 @@ export default function OrderSummary({
 
         <Button
           className="px-6 py-2 bg-primary text-white"
-          onClick={handleAddOrder}
+          onClick={handleEditOrder}
         >
-          ثبت سفارش
+          ذخیره تغییرات{" "}
         </Button>
       </div>
     </>

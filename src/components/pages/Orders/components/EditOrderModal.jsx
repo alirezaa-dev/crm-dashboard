@@ -2,13 +2,11 @@ import Button from "../../../ui/Button";
 import CustomerSelector from "./OrderModalComponents/CustomerSelector";
 import ProductSelector from "./OrderModalComponents/ProductSelector";
 import SelectedProducts from "./OrderModalComponents/SelectedProducts";
-import OrderSummary from "./OrderModalComponents/OrderAddSummary";
-import OrderAddSummary from "./OrderModalComponents/OrderAddSummary";
-export default function AddOrderModal({
+import OrderEditSummary from "./OrderModalComponents/OrderEditSummary";
+export default function EditOrderModal({
   isOpen,
   onClose,
-  handleAddOrder,
-  
+  handleEditOrder,
 
   customerSearch,
   setCustomerSearch,
@@ -40,7 +38,7 @@ export default function AddOrderModal({
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg w-[700px] p-6 max-h-[90vh]">
-        <h2 className="text-xl font-semibold mb-6">ثبت سفارش جدید</h2>
+        <h2 className="text-xl font-semibold mb-6">ویرایش سفارش</h2>
 
         {/*  Select Customer */}
         <CustomerSelector
@@ -73,10 +71,10 @@ export default function AddOrderModal({
           updateQuantity={updateQuantity}
         />
         {/* Order Summary */}
-        <OrderAddSummary
+        <OrderEditSummary
           orderAmount={orderAmount}
           onClose={onClose}
-          handleAddOrder={handleAddOrder}
+          handleEditOrder={handleEditOrder}
         />
       </div>
     </div>

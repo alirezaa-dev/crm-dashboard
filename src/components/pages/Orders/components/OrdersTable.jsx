@@ -99,7 +99,9 @@ export default function OrdersTable({ orders, customers, onView, onEdit }) {
 
                     <button
                       className="p-2 border rounded-md border-gray-200 bg-blue-100 shadow-sm cursor-pointer"
-                      onClick={() => onEdit(order)}
+                      onClick={() => {
+                        onEdit(order);
+                      }}
                     >
                       <MdOutlineModeEdit className="text-primary" />
                     </button>
