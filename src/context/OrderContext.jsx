@@ -1,4 +1,6 @@
 import { createContext, useState } from "react";
+import DeliveryMethod from "../components/ui/DeliveryMethod";
+import { DELIVERY_METHOD } from "../constants/deliveryMethod";
 
 export const OrderContext = createContext();
 export function OrderProvider({ children }) {
@@ -22,9 +24,10 @@ export function OrderProvider({ children }) {
           totalPrice: 145000,
         },
       ],
-      orderStatus: 0,
+      orderStatus: 2,
+      deliveryMethod: 0,
       orderAmount: 899000,
-      orderDate: "1405/04/08",
+      orderDate: "۱۴۰۵/۴/۱۴",
     },
   ]);
   return (

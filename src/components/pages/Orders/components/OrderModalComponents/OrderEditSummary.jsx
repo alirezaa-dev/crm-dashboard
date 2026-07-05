@@ -3,7 +3,7 @@ import Button from "../../../../ui/Button";
 export default function OrderEditSummary({
   orderAmount,
   onClose,
-  handleEditOrder,
+  handleUpdateOrder,
 }) {
   return (
     <>
@@ -25,7 +25,7 @@ export default function OrderEditSummary({
 
         <Button
           className="px-6 py-2 bg-primary text-white"
-          onClick={handleEditOrder}
+          onClick={handleUpdateOrder}
         >
           ذخیره تغییرات{" "}
         </Button>

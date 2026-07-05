@@ -1,10 +1,19 @@
 import { MdOutlineModeEdit } from "react-icons/md";
 import { IoEyeOutline } from "react-icons/io5";
-
+import { MdCheckCircleOutline } from "react-icons/md";
 import OrderStatus from "../../../ui/OrderStatus";
 import DeliveryMethod from "../../../ui/DeliveryMethod";
+import { DELIVERY_METHOD } from "../../../../constants/deliveryMethod";
+import { ORDER_STATUS } from "../../../../constants/orderStatus";
 
-export default function OrdersTable({ orders, customers, onView, onEdit }) {
+
+export default function OrdersTable({
+  orders,
+  customers,
+  onView,
+  onEdit,
+  onConfirm,
+}) {
   return (
     <div className="w-full overflow-x-auto rounded-md bg-white">
       <table className="min-w-[1200px] text-right border-collapse w-full">
@@ -27,7 +36,7 @@ export default function OrdersTable({ orders, customers, onView, onEdit }) {
             </th>
 
             <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
-              مبلغ سفارش
+              مبلغ سفارش(تومان)
             </th>
 
             <th className="px-4 py-4 border-b border-border text-sm whitespace-nowrap">
@@ -105,6 +114,15 @@ export default function OrdersTable({ orders, customers, onView, onEdit }) {
                     >
                       <MdOutlineModeEdit className="text-primary" />
                     </button>
+                    {order.deliveryMethod === DELIVERY_METHOD.SHIPPING &&
+                      order.orderStatus === ORDER_STATUS.PENDING_SHIPMENT && (
+                        <button
+                          className="p-2 border rounded-md border-gray-200 bg-green-100 shadow-sm cursor-pointer"
+                          onClick={() => onConfirm(order.id)}
+                        >
+                          <MdCheckCircleOutline className="text-green-600" />
+                        </button>
+                      )}
                   </div>
                 </td>
               </tr>

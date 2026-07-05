@@ -3,10 +3,11 @@ import CustomerSelector from "./OrderModalComponents/CustomerSelector";
 import ProductSelector from "./OrderModalComponents/ProductSelector";
 import SelectedProducts from "./OrderModalComponents/SelectedProducts";
 import OrderEditSummary from "./OrderModalComponents/OrderEditSummary";
+import DeliveryMethodSelector from "./OrderModalComponents/DeliveryMethodSelector";
 export default function EditOrderModal({
   isOpen,
   onClose,
-  handleEditOrder,
+  handleUpdateOrder,
 
   customerSearch,
   setCustomerSearch,
@@ -32,6 +33,8 @@ export default function EditOrderModal({
   updateQuantity,
 
   orderAmount,
+  deliveryMethod,
+  setDeliveryMethod,
 }) {
   if (!isOpen) return null;
 
@@ -70,11 +73,18 @@ export default function EditOrderModal({
           removeProduct={removeProduct}
           updateQuantity={updateQuantity}
         />
+
+        {/* Delivery MOthod */}
+        <DeliveryMethodSelector
+          deliveryMethod={deliveryMethod}
+          setDeliveryMethod={setDeliveryMethod}
+        />
+
         {/* Order Summary */}
         <OrderEditSummary
           orderAmount={orderAmount}
           onClose={onClose}
-          handleEditOrder={handleEditOrder}
+          handleUpdateOrder={handleUpdateOrder}
         />
       </div>
     </div>

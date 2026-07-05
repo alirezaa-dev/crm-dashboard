@@ -4,11 +4,11 @@ import ProductSelector from "./OrderModalComponents/ProductSelector";
 import SelectedProducts from "./OrderModalComponents/SelectedProducts";
 import OrderSummary from "./OrderModalComponents/OrderAddSummary";
 import OrderAddSummary from "./OrderModalComponents/OrderAddSummary";
+import DeliveryMethodSelector from "./OrderModalComponents/DeliveryMethodSelector";
 export default function AddOrderModal({
   isOpen,
   onClose,
   handleAddOrder,
-  
 
   customerSearch,
   setCustomerSearch,
@@ -34,6 +34,8 @@ export default function AddOrderModal({
   updateQuantity,
 
   orderAmount,
+  deliveryMethod,
+  setDeliveryMethod,
 }) {
   if (!isOpen) return null;
 
@@ -71,6 +73,11 @@ export default function AddOrderModal({
           decreaseQuantity={decreaseQuantity}
           removeProduct={removeProduct}
           updateQuantity={updateQuantity}
+        />
+        {/* Delivery MOthod */}
+        <DeliveryMethodSelector
+          deliveryMethod={deliveryMethod}
+          setDeliveryMethod={setDeliveryMethod}
         />
         {/* Order Summary */}
         <OrderAddSummary

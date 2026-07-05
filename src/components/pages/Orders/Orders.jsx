@@ -1,17 +1,34 @@
+import React, { useContext, useState } from "react";
+
 import Button from "../../ui/Button";
-import React, { useState, useContext } from "react";
+import DeliveryMethod from "../../ui/DeliveryMethod";
+
+import OrdersTable from "./components/OrdersTable";
+import AddOrderModal from "./components/AddOrderModal";
+import EditOrderModal from "./components/EditOrderModal";
+
 import { OrderContext } from "../../../context/OrderContext";
 import { CustomerContext } from "../../../context/CustomerContext";
 import { ProductContext } from "../../../context/ProductContext";
-import OrdersTable from "./components/OrdersTable";
-import AddOrderModal from "./components/AddOrderModal";
+
 import useOrderForm from "./hooks/useOrderForm";
-import EditOrderModal from "./components/EditOrderModal"
+
+import { DELIVERY_METHOD } from "../../../constants/deliveryMethod";
+import { ORDER_STATUS } from "../../../constants/orderStatus";
 
 export default function Orders() {
+  // =========================
+  // Context
+  // =========================
+
   const { orders, setOrders } = useContext(OrderContext);
   const { customers } = useContext(CustomerContext);
   const { products } = useContext(ProductContext);
+
+  // =========================
+  // Custom Hook
+  // =========================
+
   const {
     customerSearch,
     setCustomerSearch,
@@ -30,56 +47,34 @@ export default function Orders() {
 
     filteredCustomers,
   } = useOrderForm(products, customers);
-  const handleViewOrder = (order) => {
-    console.log(order);
-  };
 
-  const updateQuantity = (id, quantity) => {
-    setSelectedProducts(
-      selectedProducts.map((product) =>
-        product.id === id ? { ...product, quantity } : product,
-      ),
-    );
-  };
-  const handleUpdateOrder = () => {
-    const updatedOrders = orders.map((order) =>
-      order.id === selectedOrderId
-        ? {
-            ...order,
-            customerId,
-            items: selectedProducts,
-            orderAmount,
-          }
-        : order,
-    );
+  // =========================
+  // State
+  // =========================
 
-    setOrders(updatedOrders);
+  const [deliveryMethod, setDeliveryMethod] = useState(DELIVERY_METHOD.PICKUP);
 
-    setIsOpenModalEditOrder(false);
-  };
-  const handleEditOrder = (order) => {
-    setSelectedOrderId(order.id);
+  const [isOpenModalAddOrder, setIsOpenModalAddOrder] = useState(false);
+  const [isOpenModalEditOrder, setIsOpenModalEditOrder] = useState(false);
+  const [isOpenModalDeleteOrder, setIsOpenModalDeleteOrder] = useState(false);
 
-    setCustomerId(order.customerId);
-    setCustomerSearch(
-      customers.find((c) => c.id === order.customerId)?.name || "",
-    );
+  const [search, setSearch] = useState("");
 
-    const formattedItems = order.items.map((item) => {
-      const product = products.find((p) => p.id === item.productId);
+  const [orderNumber, setOrderNumber] = useState("");
+  const [nextOrderNumber, setNextOrderNumber] = useState(4002);
 
-      return {
-        id: product?.id,
-        name: product?.name,
-        price: item.productPrice,
-        quantity: item.quantity,
-      };
-    });
+  const [items, setItems] = useState([]);
 
-    setSelectedProducts(formattedItems);
+  const [orderStatus, setOrderStatus] = useState(0);
+  const [orderDate, setOrderDate] = useState("");
 
-    setIsOpenModalEditOrder(true);
-  };
+  const [nextId, setNextId] = useState(2);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+
+  // =========================
+  // Derived Data
+  // =========================
+
   const orderAmount = selectedProducts.reduce(
     (sum, product) => sum + product.price * product.quantity,
     0,
@@ -90,6 +85,29 @@ export default function Orders() {
       product.name.toLowerCase().includes(productSearch.toLowerCase()),
     )
     .slice(0, 20);
+
+  const filteredOrders = orders.filter((order) =>
+    order.orderNumber.includes(search),
+  );
+
+  // =========================
+  // Helper Functions
+  // =========================
+
+  const resetForm = () => {
+    setCustomerSearch("");
+    setCustomerId(null);
+    setProductSearch("");
+    setSelectedProducts([]);
+    setShowCustomers(false);
+    setShowProducts(false);
+    setDeliveryMethod(DELIVERY_METHOD.PICKUP);
+  };
+
+  // =========================
+  // Product Functions
+  // =========================
+
   const addProductToOrder = (product) => {
     const exists = selectedProducts.find((p) => p.id === product.id);
 
@@ -103,11 +121,21 @@ export default function Orders() {
       },
     ]);
   };
+
   const removeProduct = (id) => {
     setSelectedProducts(
       selectedProducts.filter((product) => product.id !== id),
     );
   };
+
+  const updateQuantity = (id, quantity) => {
+    setSelectedProducts(
+      selectedProducts.map((product) =>
+        product.id === id ? { ...product, quantity } : product,
+      ),
+    );
+  };
+
   const increaseQuantity = (id) => {
     setSelectedProducts(
       selectedProducts.map((product) =>
@@ -117,6 +145,7 @@ export default function Orders() {
       ),
     );
   };
+
   const decreaseQuantity = (id) => {
     setSelectedProducts(
       selectedProducts.map((product) =>
@@ -130,33 +159,14 @@ export default function Orders() {
     );
   };
 
-  const [isOpenModalAddOrder, setIsOpenModalAddOrder] = useState(false);
-  const [isOpenModalEditOrder, setIsOpenModalEditOrder] = useState(false);
-  const [isOpenModalDeleteOrder, setIsOpenModalDeleteOrder] = useState(false);
+  // =========================
+  // Order Handlers
+  // =========================
 
-  const [search, setSearch] = useState("");
-
-  const [orderNumber, setOrderNumber] = useState("");
-  const [nextOrderNumber, setNextOrderNumber] = useState(4002);
-  const [items, setItems] = useState([]);
-  const [orderStatus, setOrderStatus] = useState(0);
-  const [orderDate, setOrderDate] = useState("");
-
-  const [nextId, setNextId] = useState(2);
-  const [selectedOrderId, setSelectedOrderId] = useState(null);
-
-  const filteredOrders = orders.filter((order) =>
-    order.orderNumber.includes(search),
-  );
-  const resetForm = () => {
-    setCustomerSearch("");
-    setCustomerId(null);
-    setProductSearch("");
-    setSelectedProducts([]);
-    setShowCustomers(false);
-    setShowProducts(false);
-    setIsOpenModalAddOrder(false);
+  const handleViewOrder = (order) => {
+    console.log(order);
   };
+
   const handleAddOrder = () => {
     if (!customerId) {
       alert("لطفاً یک مشتری انتخاب کنید.");
@@ -176,7 +186,11 @@ export default function Orders() {
       customerId,
       items: selectedProducts,
       orderAmount,
-      orderStatus: 0,
+      deliveryMethod,
+      orderStatus:
+        deliveryMethod === DELIVERY_METHOD.PICKUP
+          ? ORDER_STATUS.CONFIRMED
+          : ORDER_STATUS.PENDING_SHIPMENT,
       orderDate: today,
     };
 
@@ -184,8 +198,67 @@ export default function Orders() {
 
     setNextId((prev) => prev + 1);
     setNextOrderNumber((prev) => prev + 1);
+
     resetForm();
+
+    setIsOpenModalAddOrder(false);
   };
+
+  const handleEditOrder = (order) => {
+    setSelectedOrderId(order.id);
+
+    setCustomerId(order.customerId);
+    setDeliveryMethod(order.deliveryMethod);
+
+    setCustomerSearch(
+      customers.find((c) => c.id === order.customerId)?.name || "",
+    );
+
+    const formattedItems = order.items.map((item) => {
+      const product = products.find((p) => p.id === item.productId);
+
+      return {
+        id: product?.id,
+        name: product?.name,
+        price: item.productPrice,
+        quantity: item.quantity,
+      };
+    });
+
+    setSelectedProducts(formattedItems);
+
+    setIsOpenModalEditOrder(true);
+  };
+
+  const handleUpdateOrder = () => {
+    const updatedOrders = orders.map((order) =>
+      order.id === selectedOrderId
+        ? {
+            ...order,
+            customerId,
+            items: selectedProducts,
+            deliveryMethod,
+            orderAmount,
+          }
+        : order,
+    );
+
+    setOrders(updatedOrders);
+
+    setIsOpenModalEditOrder(false);
+  };
+
+  const handleConfirmOrder = (orderId) => {
+  setOrders((prevOrders) =>
+    prevOrders.map((order) =>
+      order.id === orderId
+        ? { ...order, orderStatus: ORDER_STATUS.SHIPPED }
+        : order
+    )
+  );
+};
+
+ 
 
   return (
     <>
@@ -196,6 +269,7 @@ export default function Orders() {
           className="p-2 border rounded-sm mx-1 border-gray-300"
           onClick={() => {
             setIsOpenModalAddOrder(true);
+            resetForm();
           }}
         >
           <span className="text-lg pl-2">+</span>
@@ -218,6 +292,7 @@ export default function Orders() {
         customers={customers}
         onView={handleViewOrder}
         onEdit={handleEditOrder}
+        onConfirm={handleConfirmOrder}
       />
 
       {/* Add Order Modal */}
@@ -247,14 +322,16 @@ export default function Orders() {
         decreaseQuantity={decreaseQuantity}
         updateQuantity={updateQuantity}
         orderAmount={orderAmount}
+        deliveryMethod={deliveryMethod}
+        setDeliveryMethod={setDeliveryMethod}
       />
-      {/* Add Order Modal */}
+      {/* Edit Order Modal */}
       <EditOrderModal
         isOpen={isOpenModalEditOrder}
         onClose={() => {
           setIsOpenModalEditOrder(false);
         }}
-        handleEditOrder={handleEditOrder}
+        handleUpdateOrder={handleUpdateOrder}
         customerSearch={customerSearch}
         setCustomerSearch={setCustomerSearch}
         customerId={customerId}
@@ -275,6 +352,8 @@ export default function Orders() {
         decreaseQuantity={decreaseQuantity}
         updateQuantity={updateQuantity}
         orderAmount={orderAmount}
+        deliveryMethod={deliveryMethod}
+        setDeliveryMethod={setDeliveryMethod}
       />
     </>
   );
