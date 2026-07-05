@@ -1,31 +1,19 @@
-import Button from "../../../ui/Button";
 import CustomerSelector from "./OrderModalComponents/CustomerSelector";
 import ProductSelector from "./OrderModalComponents/ProductSelector";
 import SelectedProducts from "./OrderModalComponents/SelectedProducts";
-import OrderSummary from "./OrderModalComponents/OrderAddSummary";
 import OrderAddSummary from "./OrderModalComponents/OrderAddSummary";
 import DeliveryMethodSelector from "./OrderModalComponents/DeliveryMethodSelector";
+
 export default function AddOrderModal({
   isOpen,
   onClose,
   handleAddOrder,
 
-  customerSearch,
-  setCustomerSearch,
-  customerId,
-  setCustomerId,
-  showCustomers,
-  setShowCustomers,
+  orderDraft,
+  updateDraft,
+
   filteredCustomers,
-
-  productSearch,
-  setProductSearch,
-  showProducts,
-  setShowProducts,
   filteredProducts,
-
-  selectedProducts,
-  setSelectedProducts,
 
   addProductToOrder,
   removeProduct,
@@ -34,8 +22,6 @@ export default function AddOrderModal({
   updateQuantity,
 
   orderAmount,
-  deliveryMethod,
-  setDeliveryMethod,
 }) {
   if (!isOpen) return null;
 
@@ -44,41 +30,44 @@ export default function AddOrderModal({
       <div className="bg-white rounded-lg w-[700px] p-6 max-h-[90vh]">
         <h2 className="text-xl font-semibold mb-6">ثبت سفارش جدید</h2>
 
-        {/*  Select Customer */}
+        {/* Select Customer */}
         <CustomerSelector
-          customerSearch={customerSearch}
-          setCustomerSearch={setCustomerSearch}
-          setCustomerId={setCustomerId}
-          showCustomers={showCustomers}
-          setShowCustomers={setShowCustomers}
+          customerSearch={orderDraft.customerSearch}
+          setCustomerSearch={(value) => updateDraft("customerSearch", value)}
+          customerId={orderDraft.customerId}
+          setCustomerId={(value) => updateDraft("customerId", value)}
+          showCustomers={orderDraft.showCustomers}
+          setShowCustomers={(value) => updateDraft("showCustomers", value)}
           filteredCustomers={filteredCustomers}
         />
-        {/* Select Products */}
 
+        {/* Select Products */}
         <ProductSelector
-          productSearch={productSearch}
-          setProductSearch={setProductSearch}
-          showProducts={showProducts}
-          setShowProducts={setShowProducts}
+          productSearch={orderDraft.productSearch}
+          setProductSearch={(value) => updateDraft("productSearch", value)}
+          showProducts={orderDraft.showProducts}
+          setShowProducts={(value) => updateDraft("showProducts", value)}
           filteredProducts={filteredProducts}
-          selectedProducts={selectedProducts}
+          selectedProducts={orderDraft.selectedProducts}
           addProductToOrder={addProductToOrder}
-          setShowCustomers={setShowCustomers}
+          setShowCustomers={(value) => updateDraft("showCustomers", value)}
         />
 
         {/* Selected Products */}
         <SelectedProducts
-          selectedProducts={selectedProducts}
+          selectedProducts={orderDraft.selectedProducts}
           increaseQuantity={increaseQuantity}
           decreaseQuantity={decreaseQuantity}
           removeProduct={removeProduct}
           updateQuantity={updateQuantity}
         />
-        {/* Delivery MOthod */}
+
+        {/* Delivery Method */}
         <DeliveryMethodSelector
-          deliveryMethod={deliveryMethod}
-          setDeliveryMethod={setDeliveryMethod}
+          deliveryMethod={orderDraft.deliveryMethod}
+          setDeliveryMethod={(value) => updateDraft("deliveryMethod", value)}
         />
+
         {/* Order Summary */}
         <OrderAddSummary
           orderAmount={orderAmount}
