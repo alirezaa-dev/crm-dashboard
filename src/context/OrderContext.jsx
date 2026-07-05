@@ -12,7 +12,6 @@ export function OrderProvider({ children }) {
       items: [
         {
           productId: 1,
-
           quantity: 2,
           productPrice: 189000,
           totalPrice: 378000,

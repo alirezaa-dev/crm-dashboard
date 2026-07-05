@@ -3,26 +3,61 @@ import { Link } from "react-router";
 export default function Sidebar() {
   return (
     <div className="w-64 bg-white border-l border-gray-200 shadow-sm p-4">
-      <h1 className="text-lg font-bold mb-6">فروشگاه دهقان</h1>
+      <h1 className="mb-6 text-lg font-bold">فروشگاه دهقان</h1>
 
       <ul className="space-y-3">
-        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          داشبورد
+        <li>
+          <Link
+            to="/"
+            className="block rounded p-2 text-right hover:bg-gray-100"
+          >
+            داشبورد
+          </Link>
         </li>
-        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          <Link to="/customers">مشتریان</Link>
+
+        <li>
+          <Link
+            to="/customers"
+            className="block rounded p-2 text-right hover:bg-gray-100"
+          >
+            مشتریان
+          </Link>
         </li>
-        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          <Link to="/products">محصولات</Link>
+
+        <li>
+          <Link
+            to="/products"
+            className="block rounded p-2 text-right hover:bg-gray-100"
+          >
+            محصولات
+          </Link>
         </li>
-        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          <Link to="/categories">دسته‌بندی‌ها</Link>
+
+        <li>
+          <Link
+            to="/categories"
+            className="block rounded p-2 text-right hover:bg-gray-100"
+          >
+            دسته‌بندی‌ها
+          </Link>
         </li>
-        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          <Link to="/brands">برندها</Link>
+
+        <li>
+          <Link
+            to="/brands"
+            className="block rounded p-2 text-right hover:bg-gray-100"
+          >
+            برندها
+          </Link>
         </li>
-        <li className="p-2 rounded hover:bg-gray-100 cursor-pointer text-right">
-          <Link to="/orders">سفارشات</Link>
+
+        <li>
+          <Link
+            to="/orders"
+            className="block rounded p-2 text-right hover:bg-gray-100"
+          >
+            سفارشات
+          </Link>
         </li>
       </ul>
     </div>
