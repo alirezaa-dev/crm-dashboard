@@ -8,6 +8,8 @@ import EditProductModal from "./components/EditProductModal";
 import DeleteProductModal from "./components/DeleteProductModal";
 import ProductSearch from "./components/ProductSearch";
 import ProductsHeader from "./components/ProductsHeader";
+import Button from "../../ui/Button";
+import { formatPrice } from "../../../utils/formatPrice";
 
 export default function Products() {
   const { categories } = useContext(CategoryContext);
@@ -25,10 +27,48 @@ export default function Products() {
   const [stock, setStock] = useState("");
   const [isActive, setIsActive] = useState(true);
   const [categoryId, setCategoryId] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedStock, setSelectedStock] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase()),
-  );
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCategory =
+      !selectedCategory || product.categoryId === Number(selectedCategory);
+
+    const matchesBrand =
+      !selectedBrand || product.brandId === Number(selectedBrand);
+
+    const matchesStatus =
+      !selectedStatus ||
+      (selectedStatus === "active" && product.isActive) ||
+      (selectedStatus === "inactive" && !product.isActive);
+
+    const matchesStock =
+      !selectedStock ||
+      (selectedStock === "in" && product.stock > 0) ||
+      (selectedStock === "out" && product.stock === 0);
+
+    const matchesMinPrice = !minPrice || product.price >= Number(minPrice);
+
+    const matchesMaxPrice = !maxPrice || product.price <= Number(maxPrice);
+
+    return (
+      matchesSearch &&
+      matchesCategory &&
+      matchesBrand &&
+      matchesStatus &&
+      matchesStock &&
+      matchesMinPrice &&
+      matchesMaxPrice
+    );
+  });
   function resetForm() {
     setName("");
     setBrandId("");
@@ -125,6 +165,150 @@ export default function Products() {
 
       {/* Search */}
       <ProductSearch search={search} setSearch={setSearch} />
+      {/* Filters */}
+      <div className="bg-white rounded-lg border border-gray-200 p-5">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b border-gray-100 pb-4 mb-6">
+          <div className="flex items-center gap-2">
+            <Filter size={18} className="text-gray-500" />
+            <h3 className="font-semibold text-gray-800">فیلتر محصولات</h3>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategory("");
+              setSelectedBrand("");
+              setSelectedStatus("");
+              setSelectedStock("");
+              setMinPrice("");
+              setMaxPrice("");
+            }}
+            className="flex items-center gap-2 text-sm text-gray-500 hover:text-red-500 transition-colors"
+          >
+            <RotateCcw size={16} />
+            پاک کردن فیلترها
+          </button>
+        </div>
+
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Category */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">
+              دسته‌بندی
+            </label>
+
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="">همه دسته‌ها</option>
+
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Brand */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">برند</label>
+
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="">همه برندها</option>
+
+              {brands.map((brand) => (
+                <option key={brand.id} value={brand.id}>
+                  {brand.title}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Status */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">وضعیت</label>
+
+            <select
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="">همه وضعیت‌ها</option>
+              <option value="active">فعال</option>
+              <option value="inactive">غیرفعال</option>
+            </select>
+          </div>
+
+          {/* Stock */}
+          <div>
+            <label className="block text-sm text-gray-600 mb-2">موجودی</label>
+
+            <select
+              value={selectedStock}
+              onChange={(e) => setSelectedStock(e.target.value)}
+              className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            >
+              <option value="">همه موجودی‌ها</option>
+              <option value="in">دارای موجودی</option>
+              <option value="out">ناموجود</option>
+            </select>
+          </div>
+        </div>
+
+        {/* Price */}
+        <div className="mt-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-3">بازه قیمت</h4>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Min Price */}
+            <div className="flex items-center h-12 border border-gray-200 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
+              <span className="px-4 bg-gray-50 border-l text-sm text-gray-600 whitespace-nowrap">
+                از
+              </span>
+
+              <input
+                type="text"
+                value={formatPrice(minPrice)}
+                onChange={(e) => setMinPrice(parsePrice(e.target.value))}
+                placeholder="300,000"
+                className="flex-1 h-full px-3 outline-none bg-white"
+              />
+
+              <span className="px-4 text-sm text-gray-500 whitespace-nowrap">
+                تومان
+              </span>
+            </div>
+
+            {/* Max Price */}
+            <div className="flex items-center h-12 border border-gray-200 rounded-md overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary">
+              <span className="px-4 bg-gray-50 border-l text-sm text-gray-600 whitespace-nowrap">
+                تا
+              </span>
+
+              <input
+                type="text"
+                value={formatPrice(maxPrice)}
+                onChange={(e) => setMaxPrice(parsePrice(e.target.value))}
+                placeholder="800,000"
+                className="flex-1 h-full px-3 outline-none bg-white"
+              />
+
+              <span className="px-4 text-sm text-gray-500 whitespace-nowrap">
+                تومان
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Table */}
       <ProductsTable
