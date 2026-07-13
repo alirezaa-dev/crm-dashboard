@@ -202,7 +202,7 @@ export default function Products() {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             >
-              <option value=""> دسته‌ها</option>
+              <option value="">همه دسته‌ها</option>
 
               {categories.map((category) => (
                 <option key={category.id} value={category.id}>
